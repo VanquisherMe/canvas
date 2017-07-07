@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+</style>
+<body>
+
+<canvas style="border: 1px solid #000;" id="myCanvas" height="1400" width="1420"></canvas>
+
+<script>
+   /* var c = document.getElementById("myCanvas");
+    var context = c.getContext("2d");
+    context.beginPath();
+    context.moveTo(100,500);
+    for(var x=100;x< 700;x++){
+//        console.log(Math.sin(x))
+        console.log(100*Math.PI/180)
+        context.lineTo(x,-100*Math.sin((x-100)*Math.PI/180)+500)
+    }
+    context.closePath()
+    context.strokeStyle = "#FF0000";
+    context.stroke();
+    context.fill()*/
+
+
+    var c=document.getElementById("myCanvas");
+    var ctx=c.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(20,20);           // 创建开始点
+    ctx.lineTo(100,20);          // 创建水平线
+    ctx.arcTo(150,20,150,70,10); // 创建弧
+    ctx.lineTo(150,120);         // 创建垂直线
+    ctx.closePath()
+    ctx.stroke();                // 进行绘制
+
+
+</script>
+</body>
+</html>

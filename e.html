@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+
+    .edit{
+        width: 1000px;
+        height: 800px;
+        position: relative;
+        border: 1px solid #b4b4b4;
+    }
+    .rect{
+        width: 300px;
+        height: 150px;
+        background-color: #2153cb;
+        position: absolute;
+        left: 300px;
+        top:300px;
+    }
+    .rect-zx,
+    .rect-01,
+    .rect-02,
+    .rect-03,
+    .rect-04,
+    .rect-tz,
+    .rect-left{
+        width: 8px;
+        height: 8px;
+        background-color: #ca3a3d;
+        position: absolute;
+        cursor: pointer;
+    }
+    .rect-tz{
+        width: 14px;
+        height: 14px;
+        cursor:move;
+    }
+
+    .rect-01.act,
+    .rect-02.act,
+    .rect-03.act,
+    .rect-04.act,
+    .rect-zx.act,
+    .rect-tz.act,
+    .rect-left.act{
+        background-color:#ffff00;
+    }
+    .rect-zx{
+        left: 50%;
+        top:50%;
+        margin-top: -4px;
+        margin-left: -4px;
+    }
+
+    .rect-01{
+        left: -4px;
+        top:-4px;
+    }
+    .rect-02{
+        right: -4px;
+        top:-4px;
+    }
+    .rect-03{
+        right: -4px;
+        bottom:-4px;
+    }
+    .rect-04{
+        left: -4px;
+        bottom:-4px;
+    }
+    .rect-tz{
+        left: 50%;
+        bottom:-30px;
+        margin-left: -7px;
+    }
+    .rect-left{
+        right:  -4px;
+        top:50%;
+        margin-top: -4px;
+        cursor:e-resize
+    }
+
+</style>
+<body>
+<div class="edit">
+    <div class="rect">
+        <dvi class="rect-zx"></dvi>
+       <!-- <div class="rect-01"></div>
+        <div class="rect-02"></div>
+        <div class="rect-03"></div>
+        <div class="rect-04"></div>-->
+
+
+        <div class="rect-tz"></div>
+
+        <div class="rect-left"></div>
+
+        <div class="cont">
+122222222222223
+        </div>
+    </div>
+</div>
+
+
+<script src="jquery.js"></script>
+<script>
+
+
+    $(function () {
+
+
+        function captureMouse (element,callbask,cb){
+            var mouse = {x: 0, y: 0}
+
+
+            element.on("mousemove",function (e) {
+                var x, y;
+                x = e.pageX;
+                y = e.pageY;
+
+                mouse.x = x;
+                mouse.y = y;
+
+                callbask(mouse)
+            });
+
+            element.mouseup(function (){
+                $(this).unbind("mousemove");
+                cb()
+            });
+        }
+
+        var $rect= $(".rect")
+        var rtzb={
+            x:$rect.offset().left,
+            y:$rect.offset().top
+        }
+        var av={
+            x:$rect.offset().left+$rect.width()/2,
+            y:$rect.offset().top+$rect.height()/2
+        };
+
+        /*坐标距离*/
+        function  coord(a ,b) {
+            var cx = a.x - b.x;
+           /* var cy = a.y - b.y;
+            return  Math.pow((cx * cx + cy * cy), 0.5);*/
+
+            return cx
+        }
+
+
+        $(".rect-left").on("mousedown",function (e) {
+            var $self=$(this)
+            var cdn=0;
+            var cdnw=$rect.width()
+            $(this).addClass("act");
+            var iar={
+                x:e.pageX,
+                y:e.pageY
+            }
+
+            captureMouse($(".edit"),function (mouse) {
+               var cd=  coord(mouse,iar)
+                console.log(cd)
+                /*if($rect.width()<cdnw){
+                    $rect.width(cdnw+cd)
+                }else {
+                    $rect.width(cdnw-cd)
+                }*/
+                $rect.width(cdnw+cd)
+
+            },function () {
+                $self.removeClass("act");
+                av={
+                    x:$rect.offset().left+$rect.width()/2,
+                    y:$rect.offset().top+$rect.height()/2
+                };
+            })
+
+        })
+        $(".rect-zx").on("mousedown",function (e) {
+            var $self=$(this)
+            $(this).addClass("act");
+            var nowzb={
+                x:rtzb.x,
+                y:rtzb.y
+            }
+
+            captureMouse($(".edit"),function (mouse) {
+                var dx = mouse.x - av.x,
+                    dy = mouse.y - av.y;
+
+                console.log(dx+":"+dy)
+                rtzb={
+                    x:nowzb.x+dx,
+                    y:nowzb.y+dy
+                }
+                console.log(rtzb.x+":"+dy)
+                $rect.css({
+                    left:rtzb.x,
+                    top:rtzb.y
+
+                })
+
+
+            },function () {
+                $self.removeClass("act");
+
+                av={
+                    x:$rect.offset().left+$rect.width()/2,
+                    y:$rect.offset().top+$rect.height()/2
+                };
+            })
+
+
+
+        })
+
+        $(".rect-tz").on("mousedown",function (e) {
+            var $self=$(this)
+            $(this).addClass("act");
+
+            captureMouse($(".edit"),function (mouse) {
+                var dx = mouse.x - av.x,
+                    dy = mouse.y - av.y;
+
+                var rotate=Math.atan2(dy, dx) * 180 / Math.PI-90;
+                console.log(rotate)
+                $rect.css({
+                    transform:"rotate("+ rotate +"deg)"
+                })
+            },function () {
+                $self.removeClass("act");
+            })
+
+
+
+        })
+
+       /* $(".rect-01").on("mousedown",function (e) {
+           var $self=$(this)
+            $(this).addClass("act");
+
+            captureMouse($(".edit"),function (mouse) {
+                var dx = mouse.x - av.x,
+                    dy = mouse.y - av.y;
+
+                var rotate=Math.atan2(dy, dx) * 180 / Math.PI +150;
+                console.log(rotate)
+                $rect.css({
+                    transform:"rotate("+ rotate +"deg)"
+                })
+            },function () {
+                $self.removeClass("act");
+            })
+
+
+
+        })
+
+        $(".rect-02").on("mousedown",function (e) {
+            var $self=$(this)
+            $(this).addClass("act");
+
+            captureMouse($(".edit"),function (mouse) {
+                var dx = mouse.x - av.x,
+                    dy = mouse.y - av.y;
+                var rotate=Math.atan2(dy, dx) * 180 / Math.PI +30;
+
+                $rect.css({
+                    transform:"rotate("+ rotate +"deg)"
+                })
+            },function () {
+                $self.removeClass("act");
+            })
+
+
+
+        })
+
+        $(".rect-03").on("mousedown",function (e) {
+            var $self=$(this)
+            $(this).addClass("act");
+
+            captureMouse($(".edit"),function (mouse) {
+                var dx = mouse.x - av.x,
+                    dy = mouse.y - av.y;
+
+                var rotate=Math.atan2(dy, dx) * 180 / Math.PI -30;
+                console.log(rotate)
+                $rect.css({
+                    transform:"rotate("+ rotate +"deg)"
+                })
+            },function () {
+                $self.removeClass("act");
+            })
+
+
+
+        })
+        $(".rect-04").on("mousedown",function (e) {
+            var $self=$(this)
+            $(this).addClass("act");
+
+            captureMouse($(".edit"),function (mouse) {
+                var dx = mouse.x - av.x,
+                    dy = mouse.y - av.y;
+
+                var rotate=Math.atan2(dy, dx) * 180 / Math.PI -150;
+                console.log(rotate)
+                $rect.css({
+                    transform:"rotate("+ rotate +"deg)"
+                })
+            },function () {
+                $self.removeClass("act");
+            })
+
+
+
+        })*/
+
+    })
+</script>
+</body>
+</html>
